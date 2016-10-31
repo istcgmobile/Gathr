@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "C:\\Users\\ryanm\\AndroidStudioProjects\\Gathr\\libs\\MaterialDateTimePicker\\build\\intermediates\\res\\merged\\release\\drawable-v21\\mdtp_material_button_background.xml",
+        "source": "C:\\Users\\ryanm\\AndroidStudioProjects\\Gathr\\libs\\MaterialDateTimePicker\\src\\main\\res\\drawable-v21\\mdtp_material_button_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\ryanm\\AndroidStudioProjects\\Gathr\\libs\\MaterialDateTimePicker\\build\\intermediates\\res\\merged\\release\\drawable-v21\\mdtp_material_button_selected.xml",
+        "source": "C:\\Users\\ryanm\\AndroidStudioProjects\\Gathr\\libs\\MaterialDateTimePicker\\src\\main\\res\\drawable-v21\\mdtp_material_button_selected.xml"
+    }
+]

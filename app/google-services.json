@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "741513755600",
+    "firebase_url": "https://fir-gathr.firebaseio.com",
+    "project_id": "firebase-gathr",
+    "storage_bucket": "firebase-gathr.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741513755600:android:cdae6127a622eaa5",
+        "android_client_info": {
+          "package_name": "com.ryanmearkle.dev.gathr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "741513755600-vttsu4gogt2elesbpphclcuml7h3j16b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ryanmearkle.dev.gathr",
+            "certificate_hash": "0272B601E8C4CBEAE7A2D90177C4080E2C6F5CB0"
+          }
+        },
+        {
+          "client_id": "741513755600-bvqtg7qb9hj7e0jn0oip5qtqu863b4ei.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMyn5llSdwo5_QbCI0JYZe2iO7PPZ9MHE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

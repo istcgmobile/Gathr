@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:elevation="50dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/eventNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weekly Meeting"
+            android:textAppearance="@android:style/TextAppearance.Material.Title" />
+
+        <TextView
+            android:id="@+id/groupNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IST Consulting Group"
+            android:textAppearance="@android:style/TextAppearance.Material.Small"
+            android:layout_below="@+id/eventNameText"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/eventDescText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/groupNameText"
+            android:layout_marginBottom="8dp"
+            android:text="This is our standard weekly meeting to cover new information for the group. Please attend if you are available. This is extra text to test truncation of the description, the full description can be viewed when clicked."
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textAppearance="@android:style/TextAppearance.Material.Body1" />
+
+        <LinearLayout
+            android:id="@+id/timelayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/eventDescText"
+            android:gravity="left">
+
+            <TextView
+                android:id="@+id/startTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="8pm at 205 IST"
+                android:gravity="center_vertical"
+                android:textAppearance="@android:style/TextAppearance.Material.Small" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:layout_alignTop="@+id/timelayout"
+            android:layout_alignParentStart="true">
+
+            <Button
+                android:id="@+id/moreInfoButton"
+                style="?android:buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:gravity="right|center_vertical"
+                android:text="View Details"
+                android:onClick="viewDetail"
+                android:padding="0dp"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
