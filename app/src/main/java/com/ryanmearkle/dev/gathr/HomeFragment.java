@@ -3,6 +3,7 @@ package com.ryanmearkle.dev.gathr;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.ryanmearkle.dev.gathr.models.Group;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 
 /**
@@ -116,6 +118,12 @@ public class HomeFragment extends ViewFragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mListener.disableCollapse();
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof onLoadListener) {
@@ -124,6 +132,7 @@ public class HomeFragment extends ViewFragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
     }
 
     @Override
@@ -167,5 +176,6 @@ public class HomeFragment extends ViewFragment {
     public interface onLoadListener {
         // TODO: Update argument type and name
         void onLoadInteraction(String friendlyName, String tag);
+        void disableCollapse();
     }
 }

@@ -31,7 +31,11 @@
         <activity
             android:name=".GoogleSignInActivity"
             android:theme="@style/ThemeOverlay.ColorNavActivity" />
-        <activity android:name=".CalendarActivity"></activity>
+        <activity android:name=".CalendarActivity" />
+        <activity
+            android:name=".EventDetailActivity"
+            android:label="@string/title_activity_scrolling"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

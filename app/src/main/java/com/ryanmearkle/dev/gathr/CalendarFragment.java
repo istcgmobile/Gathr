@@ -1,8 +1,10 @@
 package com.ryanmearkle.dev.gathr;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -157,22 +159,27 @@ public class CalendarFragment extends ViewFragment{
                     }
                 });
 
-        final Button button = (Button) view.findViewById(R.id.nameButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(mCurrentUser.getName(), mCurrentUser.getUid());
-                }
-        });
 
         return view;
     }
+
+    public void viewDetail(View v){
+        Intent intent = new Intent(getContext(), CalendarActivity.class);
+        startActivity(intent);
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onLoadInteraction(null, null);
         }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mListener.enableCollapse();
     }
 
     @Override
@@ -203,6 +210,7 @@ public class CalendarFragment extends ViewFragment{
     public interface onLoadListener {
         // TODO: Update argument type and name
         void onLoadInteraction(String name, String tag);
+        void enableCollapse();
     }
 
 

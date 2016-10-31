@@ -12,7 +12,7 @@
         app:showAsAction="never"/>
     <item
         android:id="@+id/group_picker"
-        android:icon="@drawable/ic_group_white_24dp"
+        android:icon="@drawable/ic_event_white_24dp"
         android:title="Group"
         app:showAsAction="always"/>
 </menu>

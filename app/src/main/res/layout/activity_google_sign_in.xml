@@ -56,6 +56,15 @@
             android:visibility="visible"
             tools:visibility="gone" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sign_in_button"
+            android:layout_centerHorizontal="true"
+            android:text="Use a Test Account"
+            android:id="@+id/testAccountButton"
+            android:onClick="onClick" />
+
     </RelativeLayout>
 
 </LinearLayout>
