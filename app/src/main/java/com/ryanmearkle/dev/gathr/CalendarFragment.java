@@ -105,31 +105,6 @@ public class CalendarFragment extends ViewFragment{
         //FirebaseDatabase database = FirebaseDatabase.getInstance();
         //DatabaseReference myRef = database.getReference("message");
         //myRef.setValue("Hello, World!");
-        Calendar now = Calendar.getInstance();
-
-
-        Calendar[] selectableDays = new Calendar[7];
-        Calendar day = Calendar.getInstance();
-        Calendar day2 = Calendar.getInstance();
-        Calendar day3 = Calendar.getInstance();
-        Calendar day4 = Calendar.getInstance();
-        Calendar day5 = Calendar.getInstance();
-        Calendar day6 = Calendar.getInstance();
-        Calendar day7 = Calendar.getInstance();
-
-        day.set(2016, Calendar.OCTOBER, 3);         selectableDays[0]=day;
-        day2.set(2016, Calendar.OCTOBER, 10);        selectableDays[1]=day2;
-        day3.set(2016, Calendar.OCTOBER, 17);        selectableDays[2]=day3;
-        day4.set(2016, Calendar.OCTOBER, 24);        selectableDays[3]=day4;
-        day5.set(2016, Calendar.OCTOBER, 27);        selectableDays[4]=day5;
-        day6.set(2016, Calendar.OCTOBER, 31);        selectableDays[5]=day6;
-        day6.set(2017, Calendar.MAY, 7);        selectableDays[6]=day7;
-
-
-        //dpd.setSelectableDays(selectableDays);
-
-        //getActivity().getFragmentManager().beginTransaction().replace(R.id.calendarView, dpd).commit();
-
 
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
@@ -137,10 +112,11 @@ public class CalendarFragment extends ViewFragment{
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = EventAdapter.newInstance(getContext());
         mRecyclerView.setAdapter(mAdapter);
+
+
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
-
         mFirebaseDatabase.getReference()
                 .child("users")
                 .child(mFirebaseUser.getUid())
@@ -151,15 +127,12 @@ public class CalendarFragment extends ViewFragment{
                         mCurrentUser = userAccount;
 
                     }
-
                     @Override
                     public void onCancelled(DatabaseError error) {
                         // Failed to read value
                         Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });
-
-
         return view;
     }
 
