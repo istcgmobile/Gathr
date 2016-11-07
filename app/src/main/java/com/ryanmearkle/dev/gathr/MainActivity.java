@@ -53,13 +53,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity
         extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
-                    HomeFragment.onLoadListener,
                     CalendarFragment.onLoadListener,
                     GroupListFragment.onLoadListener,
                     View.OnClickListener,
                     GoogleApiClient.OnConnectionFailedListener,
                     CreateGroupDialogFragment.CreateGroupDialogListener,
-                    JoinGroupDialogFragment.JoinGroupDialogListener
+                    JoinGroupDialogFragment.JoinGroupDialogListener,
+                    AddAdminDialogFragment.AddAdminDialogListener
 {
 
     private static final String TAG = "MainActivity";
@@ -86,6 +86,10 @@ public class MainActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        titleText = (TextView) findViewById(R.id.titleTextView);
+        titleText.setText("Events");
+        collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsingToolbarLayout);
 
         if(getIntent().getExtras()==null){
             setupFirebase();
@@ -102,13 +106,6 @@ public class MainActivity
                 setupFirebase();
             }
         }
-
-
-
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
-        titleText = (TextView) findViewById(R.id.titleTextView);
-        titleText.setText("Events");
-        collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsingToolbarLayout);
     }
 
     private void setupFirebase() {
@@ -146,14 +143,14 @@ public class MainActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("Datasnapshot", dataSnapshot.toString());
                 if(!dataSnapshot.exists()){
-                    Map<String, Boolean> groups = new HashMap<String, Boolean>();
+                    Map<String, String> groups = new HashMap<String, String>();
                     User newUser = new User(mFirebaseUser.getUid(), mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail(), mPhotoUrl.toString(), groups );
                     mFirebaseDatabase.getReference()
                             .child("users")
                             .child(mFirebaseUser.getUid())
                             .setValue(newUser);
                     mCurrentUser = newUser;
-                    //Log.d("SOS", "Value is: ");
+                    Log.d(mCurrentUser.getUid(), newUser.getUid());
                 }
                 else {
                     mCurrentUser = dataSnapshot.getValue(User.class);
@@ -306,7 +303,7 @@ public class MainActivity
         if (id == R.id.nav_home) {
             replaceFragment("CALENDAR", true);
         } else if (id == R.id.nav_groups) {
-            replaceFragment("RESOURCES", true);
+            replaceFragment("GROUPS", true);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -320,17 +317,13 @@ public class MainActivity
         ViewFragment fragment = (ViewFragment) fm.findFragmentByTag(TAG);
         if (fragment == null) {
             switch (TAG) {
-                case "HOME":
-                    fragment = HomeFragment.newInstance(null, null);
-                    break;
                 case "CALENDAR":
                     fragment = CalendarFragment.newInstance(null, null);
+                    titleText.setText("Events");
                     break;
-                case "RESOURCES":
+                case "GROUPS":
                     fragment = GroupListFragment.newInstance(null, null);
-                    break;
-                case "CREATEGROUP":
-                    //fragment = CreateGroupFragment.newInstance(null, null);
+                    titleText.setText("Groups");
                     break;
             }
         }
@@ -467,7 +460,7 @@ public class MainActivity
 
     }
 
-    @Override
+    //@Override
     public void disableCollapse() {
         //imageView.setVisibility(View.GONE);
         //tabLayout.setVisibility(View.VISIBLE);
