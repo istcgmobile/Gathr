@@ -5,25 +5,9 @@
     android:background="#eee"
     tools:context="com.ryanmearkle.dev.gathr.CalendarFragment">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/calendarView"
-        android:elevation="50dp">
-    </FrameLayout>
-
-
-    <Button
-        android:text="Show User Info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/nameButton"
-        style="@android:style/Widget.Material.Button.Borderless.Colored" />
-
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/calendarView"
         android:id="@+id/recyclerview"
         android:scrollbars="vertical"
         android:fadeScrollbars="true"/>

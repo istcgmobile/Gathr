@@ -3,6 +3,7 @@ package com.ryanmearkle.dev.gathr;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -163,6 +164,22 @@ public class GoogleSignInActivity extends AppCompatActivity implements
         int i = v.getId();
         if (i == R.id.sign_in_button) {
             signIn();
+        }
+        if(i == R.id.testAccountButton){
+            mAuth.signInWithEmailAndPassword("test@gmail.com", "testAccount")
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (!task.isSuccessful()) {
+                        Toast.makeText(GoogleSignInActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        startActivity(new Intent(GoogleSignInActivity.this, MainActivity.class));
+                        finish();
+                    }
+                }
+            });
         }
     }
 }

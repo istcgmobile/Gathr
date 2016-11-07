@@ -12,10 +12,10 @@ public class User {
     private String mName;
     private String mEmail;
     private String mPhotoURL;
-    private Map<String, Boolean> mGroups = new HashMap<String, Boolean>();
+    private Map<String, String> mGroups = new HashMap<String, String>();
 
 
-    public User(String uid, String name, String email, String photoURL, Map<String, Boolean> groups){
+    public User(String uid, String name, String email, String photoURL, Map<String, String> groups){
         this.mUid=uid;
         this.mName=name;
         this.mEmail=email;
@@ -64,8 +64,8 @@ public class User {
     public void setPhotoURL(String photoURL){
         this.mPhotoURL = photoURL;
     }
-    public Map<String, Boolean> getGroups(){ return this.mGroups; }
-    public void setGroups(Map<String, Boolean> groups){
+    public Map<String, String> getGroups(){ return this.mGroups; }
+    public void setGroups(Map<String, String> groups){
         this.mGroups = groups;
     }
 }

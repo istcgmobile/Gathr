@@ -6,6 +6,8 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
@@ -50,13 +53,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity
         extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
-                    HomeFragment.onLoadListener,
                     CalendarFragment.onLoadListener,
-                    ResourcesFragment.onLoadListener,
+                    GroupListFragment.onLoadListener,
                     View.OnClickListener,
                     GoogleApiClient.OnConnectionFailedListener,
                     CreateGroupDialogFragment.CreateGroupDialogListener,
-                    JoinGroupDialogFragment.JoinGroupDialogListener
+                    JoinGroupDialogFragment.JoinGroupDialogListener,
+                    AddAdminDialogFragment.AddAdminDialogListener
 {
 
     private static final String TAG = "MainActivity";
@@ -69,17 +72,40 @@ public class MainActivity
     private FirebaseUser mFirebaseUser;
     private FirebaseDatabase mFirebaseDatabase;
     private User mCurrentUser;
-    private String mUsername;
-    private String mPhotoUrl;
+    private String mUsername = "none";
+    private String mPhotoUrl = "none";
+    private String mUserEmail = "none";
     private GoogleApiClient mGoogleApiClient;
+    private AppBarLayout mAppBarLayout;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private boolean isExpanded = false;
+    private TextView titleText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        titleText = (TextView) findViewById(R.id.titleTextView);
+        titleText.setText("Events");
+        collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsingToolbarLayout);
 
-        setupFirebase();
-
+        if(getIntent().getExtras()==null){
+            setupFirebase();
+        }
+        else {
+            String useTest = getIntent().getExtras().getString("useTest");
+            if(useTest==null){
+                setupFirebase();
+            }
+            else if(useTest.equals("true")){
+                setupTestAccount();
+            }
+            else{
+                setupFirebase();
+            }
+        }
     }
 
     private void setupFirebase() {
@@ -94,7 +120,12 @@ public class MainActivity
             return;
         } else {
             mUsername = mFirebaseUser.getDisplayName();
-            mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+            if(mFirebaseUser.getPhotoUrl()==null){
+                mPhotoUrl = "";
+            }else{
+                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+            }
+            mUserEmail = mFirebaseUser.getEmail();
         }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -112,14 +143,14 @@ public class MainActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("Datasnapshot", dataSnapshot.toString());
                 if(!dataSnapshot.exists()){
-                    Map<String, Boolean> groups = new HashMap<String, Boolean>();
-                    User newUser = new User(mFirebaseUser.getUid(), mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail(), mFirebaseUser.getPhotoUrl().toString(), groups );
+                    Map<String, String> groups = new HashMap<String, String>();
+                    User newUser = new User(mFirebaseUser.getUid(), mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail(), mPhotoUrl.toString(), groups );
                     mFirebaseDatabase.getReference()
                             .child("users")
                             .child(mFirebaseUser.getUid())
                             .setValue(newUser);
                     mCurrentUser = newUser;
-                    //Log.d("SOS", "Value is: ");
+                    Log.d(mCurrentUser.getUid(), newUser.getUid());
                 }
                 else {
                     mCurrentUser = dataSnapshot.getValue(User.class);
@@ -151,7 +182,7 @@ public class MainActivity
                     }
                 });
 
-        replaceFragment("HOME", false);
+        replaceFragment("CALENDAR", false);
     }
 
     private void setupSheetFab() {
@@ -196,7 +227,7 @@ public class MainActivity
         TextView profileName = (TextView) headerView.findViewById(R.id.nameLabel);
         profileName.setText(mUsername);
         TextView profileEmail = (TextView) headerView.findViewById(R.id.emailLabel);
-        profileEmail.setText(mFirebaseUser.getEmail());
+        profileEmail.setText(mUserEmail);
         CircleImageView profilePic = (CircleImageView) headerView.findViewById(R.id.profileView);
         Glide.with(MainActivity.this)
                 .load(mPhotoUrl)
@@ -239,12 +270,23 @@ public class MainActivity
                 return true;
 
             case R.id.action_settings:
+                Intent intent = new Intent(this, GroupDetailActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.group_picker:
                 //DialogFragment groupPicker = new GroupPickerFragment();
                 //groupPicker.show(getSupportFragmentManager(), "PICKER");
-                Intent intent = new Intent(this, CalendarActivity.class);
-                startActivity(intent);
+                //Intent intent = new Intent(this, CalendarActivity.class);
+                //startActivity(intent);
+                if (isExpanded) {
+                    //ViewCompat.animate(arrow).rotation(0).start();
+                    mAppBarLayout.setExpanded(false, true);
+                    isExpanded = false;
+                } else {
+                    //ViewCompat.animate(arrow).rotation(180).start();
+                    mAppBarLayout.setExpanded(true, true);
+                    isExpanded = true;
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -259,11 +301,9 @@ public class MainActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            replaceFragment("HOME", true);
-        } else if (id == R.id.nav_calendar) {
             replaceFragment("CALENDAR", true);
-        } else if (id == R.id.nav_resources) {
-            replaceFragment("RESOURCES", true);
+        } else if (id == R.id.nav_groups) {
+            replaceFragment("GROUPS", true);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -277,17 +317,13 @@ public class MainActivity
         ViewFragment fragment = (ViewFragment) fm.findFragmentByTag(TAG);
         if (fragment == null) {
             switch (TAG) {
-                case "HOME":
-                    fragment = HomeFragment.newInstance(null, null);
-                    break;
                 case "CALENDAR":
                     fragment = CalendarFragment.newInstance(null, null);
+                    titleText.setText("Events");
                     break;
-                case "RESOURCES":
-                    fragment = ResourcesFragment.newInstance(null, null);
-                    break;
-                case "CREATEGROUP":
-                    //fragment = CreateGroupFragment.newInstance(null, null);
+                case "GROUPS":
+                    fragment = GroupListFragment.newInstance(null, null);
+                    titleText.setText("Groups");
                     break;
             }
         }
@@ -308,6 +344,9 @@ public class MainActivity
     @Override
     public void onClick(View v) {
         switch (getResources().getResourceEntryName(v.getId())) {
+            case "testAccountButton":
+                setupTestAccount();
+                break;
             case "fab_item_new_group":
                 DialogFragment dialog = new CreateGroupDialogFragment();
                 dialog.show(getSupportFragmentManager(), "NoticeDialogFragment");
@@ -420,4 +459,48 @@ public class MainActivity
     public void onJoinGroupDialogNegativeClick() {
 
     }
+
+    //@Override
+    public void disableCollapse() {
+        //imageView.setVisibility(View.GONE);
+        //tabLayout.setVisibility(View.VISIBLE);
+        titleText.setVisibility(View.GONE);
+        collapsingToolbarLayout.setTitleEnabled(true);
+
+    }
+
+    @Override
+    public void enableCollapse() {
+        //imageView.setVisibility(View.VISIBLE);
+        //tabLayout.setVisibility(View.GONE);
+        collapsingToolbarLayout.setTitleEnabled(false);
+    }
+
+    public void setupTestAccount() {
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseDatabase.getReference()
+                .child("users")
+                .child("testaccount")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.d("Datasnapshot", dataSnapshot.toString());
+                        if (!dataSnapshot.exists()) {
+
+                        } else {
+                            mCurrentUser = dataSnapshot.getValue(User.class);
+                            Log.d("wat", "wat");
+                            setupLayout();
+                            Log.d("wat", "wat1");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.w(TAG, "Failed to read value.", error.toException());
+                    }
+                });
+    }
+
 }
