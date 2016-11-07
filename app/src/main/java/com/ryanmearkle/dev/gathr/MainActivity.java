@@ -273,7 +273,7 @@ public class MainActivity
                 return true;
 
             case R.id.action_settings:
-                Intent intent = new Intent(this, CalendarActivity.class);
+                Intent intent = new Intent(this, GroupDetailActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.group_picker:
