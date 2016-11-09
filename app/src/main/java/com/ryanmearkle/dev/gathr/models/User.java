@@ -12,10 +12,10 @@ public class User {
     private String mName;
     private String mEmail;
     private String mPhotoURL;
-    private Map<String, String> mGroups = new HashMap<String, String>();
+    private Map<String, Group> mGroups = new HashMap<String, Group>();
 
 
-    public User(String uid, String name, String email, String photoURL, Map<String, String> groups){
+    public User(String uid, String name, String email, String photoURL, Map<String, Group> groups){
         this.mUid=uid;
         this.mName=name;
         this.mEmail=email;
@@ -64,8 +64,8 @@ public class User {
     public void setPhotoURL(String photoURL){
         this.mPhotoURL = photoURL;
     }
-    public Map<String, String> getGroups(){ return this.mGroups; }
-    public void setGroups(Map<String, String> groups){
+    public Map<String, Group> getGroups(){ return this.mGroups; }
+    public void setGroups(Map<String, Group> groups){
         this.mGroups = groups;
     }
 }

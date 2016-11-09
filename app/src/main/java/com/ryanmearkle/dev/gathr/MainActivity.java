@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CalendarView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,8 +77,7 @@ public class MainActivity
     private String mPhotoUrl = "none";
     private String mUserEmail = "none";
     private GoogleApiClient mGoogleApiClient;
-    private AppBarLayout mAppBarLayout;
-    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private CalendarView calendarView;
     private boolean isExpanded = false;
     private TextView titleText;
 
@@ -86,10 +86,9 @@ public class MainActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        calendarView = (CalendarView) findViewById(R.id.calendarView);
         titleText = (TextView) findViewById(R.id.titleTextView);
         titleText.setText("Events");
-        collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsingToolbarLayout);
 
         if(getIntent().getExtras()==null){
             setupFirebase();
@@ -143,7 +142,7 @@ public class MainActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("Datasnapshot", dataSnapshot.toString());
                 if(!dataSnapshot.exists()){
-                    Map<String, String> groups = new HashMap<String, String>();
+                    Map<String, Group> groups = new HashMap<String, Group>();
                     User newUser = new User(mFirebaseUser.getUid(), mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail(), mPhotoUrl.toString(), groups );
                     mFirebaseDatabase.getReference()
                             .child("users")
@@ -183,6 +182,8 @@ public class MainActivity
                 });
 
         replaceFragment("CALENDAR", false);
+        calendarView.setVisibility(View.GONE);
+
     }
 
     private void setupSheetFab() {
@@ -272,21 +273,22 @@ public class MainActivity
             case R.id.action_settings:
                 Intent intent = new Intent(this, GroupDetailActivity.class);
                 startActivity(intent);
+
+            case R.id.add_admin:
+                DialogFragment dialog1 = new AddAdminDialogFragment();
+                dialog1.show(getSupportFragmentManager(), "NoticeDialogFragment");
                 return true;
             case R.id.group_picker:
-                //DialogFragment groupPicker = new GroupPickerFragment();
-                //groupPicker.show(getSupportFragmentManager(), "PICKER");
-                //Intent intent = new Intent(this, CalendarActivity.class);
-                //startActivity(intent);
                 if (isExpanded) {
                     //ViewCompat.animate(arrow).rotation(0).start();
-                    mAppBarLayout.setExpanded(false, true);
+                    calendarView.setVisibility(View.GONE);
                     isExpanded = false;
                 } else {
                     //ViewCompat.animate(arrow).rotation(180).start();
-                    mAppBarLayout.setExpanded(true, true);
+                    calendarView.setVisibility(View.VISIBLE);
                     isExpanded = true;
                 }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -380,11 +382,11 @@ public class MainActivity
     @Override
     public void onCreateGroupDialogPositiveClick(Group group) {
         Map<String, String> admin = new HashMap<String, String>();
-        Map<String, String> groups = new HashMap<String, String>();
+        //Map<String, String> groups = new HashMap<String, String>();
 
         admin.put(mCurrentUser.getUid(), mCurrentUser.getName());
 
-        groups.put(group.getName(), group.getDesc());
+        //groups.put(group.getName(), group.getDesc());
 
         group.setAdmins(admin);
 
@@ -396,7 +398,8 @@ public class MainActivity
                 .child("users")
                 .child(mCurrentUser.getUid())
                 .child("groups")
-                .setValue(groups);
+                .child(group.getName())
+                .setValue(group);
     }
 
     @Override
@@ -458,22 +461,6 @@ public class MainActivity
     @Override
     public void onJoinGroupDialogNegativeClick() {
 
-    }
-
-    //@Override
-    public void disableCollapse() {
-        //imageView.setVisibility(View.GONE);
-        //tabLayout.setVisibility(View.VISIBLE);
-        titleText.setVisibility(View.GONE);
-        collapsingToolbarLayout.setTitleEnabled(true);
-
-    }
-
-    @Override
-    public void enableCollapse() {
-        //imageView.setVisibility(View.VISIBLE);
-        //tabLayout.setVisibility(View.GONE);
-        collapsingToolbarLayout.setTitleEnabled(false);
     }
 
     public void setupTestAccount() {

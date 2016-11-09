@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:elevation="50dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/buttonlayout">
+
+        <TextView
+            android:id="@+id/groupNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test Group"
+            android:textAppearance="@android:style/TextAppearance.Material.Title" />
+
+        <TextView
+            android:id="@+id/groupCatText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textAppearance="@android:style/TextAppearance.Material.Small"
+            android:layout_below="@+id/groupNameText"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/groupDescText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/groupCatText"
+            android:layout_marginBottom="8dp"
+            android:text="This is a placeholder group to test a FirebaseRecyclerViewAdapter functionality. This is extra text to test truncation of the description, the full description can be viewed when clicked."
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textAppearance="@android:style/TextAppearance.Material.Body1" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonlayout"
+            android:layout_width="16dp"
+            android:layout_height="match_parent"
+            android:gravity="right"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true">
+
+            <ImageButton
+                android:id="@+id/groupDetailButton"
+                style="?android:buttonBarButtonStyle"
+                android:layout_width="16dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:src="@drawable/ic_chevron_right_black_24dp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

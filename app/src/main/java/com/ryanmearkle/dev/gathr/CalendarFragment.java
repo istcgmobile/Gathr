@@ -152,7 +152,7 @@ public class CalendarFragment extends ViewFragment{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mListener.enableCollapse();
+        //mListener.enableCollapse();
     }
 
     @Override
@@ -183,7 +183,6 @@ public class CalendarFragment extends ViewFragment{
     public interface onLoadListener {
         // TODO: Update argument type and name
         void onLoadInteraction(String name, String tag);
-        void enableCollapse();
     }
 
 

@@ -11,7 +11,7 @@ import java.util.Map;
 public class Group {
 
     private String name;
-    private String description;
+    private String desc;
     private String category;
     private Map<String, String> admins;
     private Map<String, String> users;
@@ -19,26 +19,36 @@ public class Group {
     private Map<String, String> resources;
 
 
-    public Group(String name, String description, String category, Map<String, String> admins, Map<String, String> users, Map<String, String> events, Map<String, String> resources){
+    public Group(String name, String desc, String category, Map<String, String> admins, Map<String, String> users, Map<String, String> events, Map<String, String> resources){
         this.name=name;
         this.category=category;
-        this.description=description;
+        this.desc=desc;
         this.admins=admins;
         this.users=users;
         this.events=events;
         this.resources=resources;
     }
 
+    public Group(){
+
+    }
+
     public String getName(){
         return this.name;
     }
+
     public Map<String, String> getAdmins(){ return this.admins; }
     public boolean setAdmins(Map<String, String> admins){
         this.admins=admins;
         return true;
     };
+
     public String getDesc(){
-        return this.description;
+        return this.desc;
+    }
+
+    public String getCategory(){
+        return this.category;
     }
 
     @Override

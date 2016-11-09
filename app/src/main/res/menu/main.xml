@@ -11,6 +11,10 @@
         android:title="Sign Out"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/add_admin"
+        android:title="Add Admin"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/group_picker"
         android:icon="@drawable/ic_event_white_24dp"
         android:title="Group"

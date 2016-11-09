@@ -1,12 +1,23 @@
 package com.ryanmearkle.dev.gathr;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.ryanmearkle.dev.gathr.holders.GroupViewHolder;
+import com.ryanmearkle.dev.gathr.models.Group;
 
 
 /**
@@ -28,6 +39,9 @@ public class GroupListFragment extends ViewFragment {
     private String mParam2;
 
     private onLoadListener mListener;
+    private RecyclerView groupRV;
+    private DatabaseReference mFirebaseDatabaseReference;
+    private FirebaseRecyclerAdapter mFirebaseAdapter;
 
     public GroupListFragment() {
         // Required empty public constructor
@@ -75,6 +89,37 @@ public class GroupListFragment extends ViewFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_group_list, container, false);
+        Log.d("GroupListFrament", "layout inflated");
+        groupRV = (RecyclerView) v.findViewById(R.id.groupRV);
+        groupRV.setHasFixedSize(true);
+        groupRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<Group,GroupViewHolder>(
+                Group.class,
+                R.layout.item_group_list,
+                GroupViewHolder.class,
+                mFirebaseDatabaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("groups")){
+
+            @Override
+            protected void populateViewHolder(GroupViewHolder viewHolder,
+                                              Group group, final int position) {
+                //mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+                viewHolder.setCategory(group.getCategory());
+                viewHolder.setGroup(group.getName());
+                viewHolder.setDescription(group.getDesc());
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getContext(), GroupDetailActivity.class);
+                        intent.putExtra("GROUP", mFirebaseAdapter.getItem(position).toString());
+                        startActivity(intent);
+                    }
+                });
+            }
+
+
+        };
+        groupRV.setAdapter(mFirebaseAdapter);
 
         return v;
     }
