@@ -42,10 +42,18 @@
 
         <Spinner
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="16dp"
+            android:layout_weight="1"
             android:id="@+id/newadmin2" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            style="@android:style/Widget.Material.Button.Borderless"
+            android:text="+" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -54,10 +62,18 @@
 
         <Spinner
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="16dp"
+            android:layout_weight="1"
             android:id="@+id/newadmin3" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            style="@android:style/Widget.Material.Button.Borderless"
+            android:text="+" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -66,10 +82,18 @@
 
         <Spinner
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="16dp"
+            android:layout_weight="1"
             android:id="@+id/newadmin4" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            style="@android:style/Widget.Material.Button.Borderless"
+            android:text="+" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -78,9 +102,17 @@
 
         <Spinner
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="16dp"
+            android:layout_weight="1"
             android:id="@+id/newadmin5" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            style="@android:style/Widget.Material.Button.Borderless"
+            android:text="+" />
 
     </LinearLayout>
 
