@@ -424,11 +424,6 @@ public class MainActivity
 
     @Override
     public void onJoinGroupDialogPositiveClick(final String groupName) {
-        final Map<String, Boolean> groups = new HashMap<String, Boolean>();
-        final Map<String, String> users = new HashMap<String, String>();
-
-        groups.put(groupName, true);
-        users.put(mCurrentUser.getUid(), mCurrentUser.getName());
         mFirebaseDatabase.getReference()
                 .child("groups")
                 .child(groupName)
@@ -440,7 +435,7 @@ public class MainActivity
 
                             mFirebaseDatabase.getReference()
                                     .child("groups")
-                                    .child(groupName)
+                                    .child(group.getName())
                                     .child("users")
                                     .child(mCurrentUser.getUid())
                                     .setValue(mCurrentUser.getName());
@@ -450,11 +445,9 @@ public class MainActivity
                                     .child("users")
                                     .child(mCurrentUser.getUid())
                                     .child("groups")
-                                    .child(groupName)
+                                    .child(group.getName())
                                     .setValue(simpleGroup);
 
-
-                            Log.d("Group found!", groupName);
                         }
                         else {
                             Log.d("Group not found!", groupName);
