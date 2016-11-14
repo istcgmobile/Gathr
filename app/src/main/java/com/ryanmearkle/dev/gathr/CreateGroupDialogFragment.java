@@ -19,7 +19,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ryanmearkle.dev.gathr.models.Group;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by ryanm on 10/24/2016.
@@ -28,6 +36,7 @@ import com.ryanmearkle.dev.gathr.models.Group;
 public class CreateGroupDialogFragment extends DialogFragment {
 
     private AlertDialog dialog;
+    private FirebaseDatabase mFirebaseDatabase;
     private CreateGroupDialogListener mListener;
     private Group group;
     private View view;
@@ -45,6 +54,8 @@ public class CreateGroupDialogFragment extends DialogFragment {
         builder.setView(view)
                 .setPositiveButton("Create", null)
                 .setNegativeButton("Cancel", null);
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         Spinner spinner = (Spinner) view.findViewById(R.id.groupCatSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.category_array, android.R.layout.simple_spinner_item);
@@ -88,7 +99,7 @@ public class CreateGroupDialogFragment extends DialogFragment {
             {
                 @Override
                 public void onClick(View v) {
-                    TextInputLayout til = (TextInputLayout) d.findViewById(R.id.text_input_layout);
+                    final TextInputLayout til = (TextInputLayout) d.findViewById(R.id.text_input_layout);
                     TextInputLayout til1 = (TextInputLayout) d.findViewById(R.id.text_input_layout1);
                     til.setErrorEnabled(false);
                     til1.setErrorEnabled(false);
@@ -109,9 +120,42 @@ public class CreateGroupDialogFragment extends DialogFragment {
                         til1.setError("You need to enter a description");
                     }
                     if(!nameText.isEmpty() && !descText.isEmpty()){
-                        Group group = new Group(nameText, descText, category, null, null, null, null);
-                        mListener.onCreateGroupDialogPositiveClick(group);
-                        dismiss();
+
+
+                        final Group group = new Group(nameText, descText, category, null, null, null, null);
+
+                        Map<String, String> admins = new HashMap<String, String>();
+                        Map<String, String> users = new HashMap<String, String>();
+
+                        mFirebaseDatabase.getReference()
+                                .child("groups")
+                                .child(group.getName())
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            til.setErrorEnabled(false);
+                                            til.setError("A group with this name already exists.");
+                                        } else {
+
+                                            mFirebaseDatabase.getReference()
+                                                    .child("groups")
+                                                    .child(group.getName())
+                                                    .setValue(group);
+                                            mListener.onCreateGroupDialogPositiveClick(group);
+                                            dismiss();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError error) {
+                                        // Failed to read value
+                                        //Log.w(TAG, "Failed to read value.", error.toException());
+                                    }
+                                });
+
+
+
                     }
                 }
             });

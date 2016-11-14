@@ -11,40 +11,31 @@ import com.ryanmearkle.dev.gathr.R;
  */
 
 public class EventViewHolder extends RecyclerView.ViewHolder {
-    private final TextView eventName;
-    private final TextView groupName;
-    private final TextView startTime;
-    private final TextView desc;
+    public View itemView;
 
-
-
-    public static EventViewHolder newInstance(View itemView) {
-        TextView eventName = (TextView) itemView.findViewById(R.id.eventNameText);
-        TextView groupName = (TextView) itemView.findViewById(R.id.groupNameText);
-        TextView startTime = (TextView) itemView.findViewById(R.id.startTimeText);
-        TextView desc = (TextView) itemView.findViewById(R.id.eventDescText);
-
-        return new EventViewHolder(itemView, eventName, groupName, startTime, desc);
-    }
-
-    private EventViewHolder(View itemView, TextView eventName, TextView groupName, TextView startTime, TextView desc) {
+    public EventViewHolder(View itemView) {
         super(itemView);
-        this.eventName = eventName;
-        this.groupName = groupName;
-        this.startTime = startTime;
-        this.desc = desc;
+        this.itemView = itemView;
     }
 
     public void setTitle(String title) {
+        TextView eventName = (TextView) itemView.findViewById(R.id.eventNameText);
         eventName.setText(title);
     }
     public void setGroup(String group) {
+        TextView groupName = (TextView) itemView.findViewById(R.id.groupNameText);
         groupName.setText(group);
     }
     public void setDescription(String descr) {
+        TextView desc = (TextView) itemView.findViewById(R.id.eventDescText);
         desc.setText(descr);
     }
-    public void setLocation(String time, String location) {
-        startTime.setText(time + " in " + location);
+    public void setStartTime(String time){
+        TextView startTime = (TextView) itemView.findViewById(R.id.startTimeText);
+        startTime.setText(startTime.getText().toString().replace(startTime.getText().subSequence(0,6) , time));
+    }
+    public void setLocation(String location) {
+        TextView startTime = (TextView) itemView.findViewById(R.id.startTimeText);
+        startTime.setText(startTime.getText().toString().replace(startTime.getText().toString().substring(9), location));
     }
 }

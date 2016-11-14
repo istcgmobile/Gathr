@@ -59,8 +59,7 @@ public class MainActivity
                     View.OnClickListener,
                     GoogleApiClient.OnConnectionFailedListener,
                     CreateGroupDialogFragment.CreateGroupDialogListener,
-                    JoinGroupDialogFragment.JoinGroupDialogListener,
-                    AddAdminDialogFragment.AddAdminDialogListener
+                    JoinGroupDialogFragment.JoinGroupDialogListener
 {
 
     private static final String TAG = "MainActivity";
@@ -274,10 +273,6 @@ public class MainActivity
                 Intent intent = new Intent(this, GroupDetailActivity.class);
                 startActivity(intent);
 
-            case R.id.add_admin:
-                DialogFragment dialog1 = new AddAdminDialogFragment();
-                dialog1.show(getSupportFragmentManager(), "NoticeDialogFragment");
-                return true;
             case R.id.group_picker:
                 if (isExpanded) {
                     //ViewCompat.animate(arrow).rotation(0).start();
@@ -381,25 +376,45 @@ public class MainActivity
 
     @Override
     public void onCreateGroupDialogPositiveClick(Group group) {
-        Map<String, String> admin = new HashMap<String, String>();
-        //Map<String, String> groups = new HashMap<String, String>();
-
-        admin.put(mCurrentUser.getUid(), mCurrentUser.getName());
-
-        //groups.put(group.getName(), group.getDesc());
-
-        group.setAdmins(admin);
 
         mFirebaseDatabase.getReference()
                 .child("groups")
                 .child(group.getName())
-                .setValue(group);
-        mFirebaseDatabase.getReference()
-                .child("users")
-                .child(mCurrentUser.getUid())
-                .child("groups")
-                .child(group.getName())
-                .setValue(group);
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Group createdGroup = dataSnapshot.getValue(Group.class);
+
+                            Map<String, String> admins = new HashMap<String, String>();
+                            Map<String, String> users = new HashMap<String, String>();
+
+                            admins.put(mCurrentUser.getUid(), mCurrentUser.getName());
+                            users.put(mCurrentUser.getUid(), mCurrentUser.getName());
+                            createdGroup.setAdmins(admins);
+                            createdGroup.setUsers(users);
+
+                            mFirebaseDatabase.getReference()
+                                    .child("groups")
+                                    .child(createdGroup.getName())
+                                    .setValue(createdGroup);
+
+                            Group simpleGroup = new Group(createdGroup.getName(),createdGroup.getDesc(), createdGroup.getCategory(), null, null, null, null);
+                            mFirebaseDatabase.getReference()
+                                    .child("users")
+                                    .child(mCurrentUser.getUid())
+                                    .child("groups")
+                                    .child(createdGroup.getName())
+                                    .setValue(simpleGroup);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        //Log.w(TAG, "Failed to read value.", error.toException());
+                    }
+                });
     }
 
     @Override
@@ -421,24 +436,22 @@ public class MainActivity
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(dataSnapshot.exists()){
+                            Group group = dataSnapshot.getValue(Group.class);
 
-                            Map<String, Object> userGroupUpdate = new HashMap<>();
-                            userGroupUpdate.put(groupName, true);
+                            mFirebaseDatabase.getReference()
+                                    .child("groups")
+                                    .child(groupName)
+                                    .child("users")
+                                    .child(mCurrentUser.getUid())
+                                    .setValue(mCurrentUser.getName());
 
+                            Group simpleGroup = new Group(group.getName(),group.getDesc(), group.getCategory(), null, null, null, null);
                             mFirebaseDatabase.getReference()
                                     .child("users")
                                     .child(mCurrentUser.getUid())
                                     .child("groups")
-                                    .updateChildren(userGroupUpdate);
-
-
-                            Map<String, Object> groupUserUpdate = new HashMap<>();
-                            groupUserUpdate.put(mCurrentUser.getUid(), mCurrentUser.getName());
-
-                            mFirebaseDatabase.getReference()
-                                    .child("groups")
-                                    .child("users")
-                                    .updateChildren(groupUserUpdate);
+                                    .child(groupName)
+                                    .setValue(simpleGroup);
 
 
                             Log.d("Group found!", groupName);

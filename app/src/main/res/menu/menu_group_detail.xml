@@ -3,10 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.ryanmearkle.dev.gathr.GroupDetailActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/add_admin"
+        android:title="Add Admin"
+        app:showAsAction="never"/>
     <item
         android:id="@+id/action_chat"
         android:orderInCategory="100"

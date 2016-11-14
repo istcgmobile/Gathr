@@ -5,34 +5,20 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.ryanmearkle.dev.gathr.adapters.EventAdapter;
 import com.ryanmearkle.dev.gathr.models.User;
-
-
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -53,7 +39,6 @@ public class CalendarFragment extends ViewFragment{
 
 
     private RecyclerView mRecyclerView;
-    private EventAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth mFirebaseAuth;
@@ -106,12 +91,13 @@ public class CalendarFragment extends ViewFragment{
         //DatabaseReference myRef = database.getReference("message");
         //myRef.setValue("Hello, World!");
 
-
+/*
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = EventAdapter.newInstance(getContext());
         mRecyclerView.setAdapter(mAdapter);
+        */
 
 
         mFirebaseAuth = FirebaseAuth.getInstance();

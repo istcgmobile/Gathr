@@ -15,35 +15,35 @@ public class Event {
     private String groupID;
     private String location;
     private String startTime;
-    private String name;
-    private String description;
+    private String title;
+    private String desc;
 
     private List<String> attendance;
     private List<String> resources;
 
 
-    public Event(String title, String description, String groupID, String location, String startTime){
-        this.name=title;
+    public Event(String title, String desc, String groupID, String location, String startTime){
+        this.title=title;
         this.groupID=groupID;
         this.location=location;
         this.startTime=startTime;
-        this.description=description;
+        this.desc=desc;
     }
 
     public Event() {
     }
 
     public String getTitle(){
-        return this.name;
+        return this.title;
     }
     public String getLocation(){
         return this.location;
     }
-    public String getClub(){
+    public String getGroupID(){
         return this.groupID;
     }
-    public String getDate(){
+    public String getStartTime(){
         return this.startTime;
     }
-    public String getDesc() {return this.description; }
+    public String getDesc() {return this.desc; }
 }

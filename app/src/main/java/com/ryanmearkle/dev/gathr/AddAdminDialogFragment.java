@@ -13,7 +13,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ryanmearkle.dev.gathr.models.Group;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ryanm on 10/24/2016.
@@ -21,10 +30,27 @@ import com.ryanmearkle.dev.gathr.models.Group;
 
 public class AddAdminDialogFragment extends DialogFragment {
 
+    private FirebaseDatabase mFirebaseDatabase;
     private AlertDialog dialog;
     private AddAdminDialogListener mListener;
-    private Group group;
+    private String groupName;
+    private List<String> userNames = new ArrayList<String>();
+    private List<String> userIDs = new ArrayList<String>();
     private View view;
+
+    public static AddAdminDialogFragment newInstance(String groupName) {
+        AddAdminDialogFragment f = new AddAdminDialogFragment();
+        Bundle args = new Bundle();
+        args.putString("GROUP", groupName);
+        f.setArguments(args);
+        return f;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        groupName = getArguments().getString("GROUP");
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -40,20 +66,33 @@ public class AddAdminDialogFragment extends DialogFragment {
                 .setPositiveButton("Add", null)
                 .setNegativeButton("Cancel", null);
 
-        /*
-        Spinner spinner = (Spinner) view.findViewById(R.id.groupCatSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.category_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        */
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseDatabase.getReference().child("groups").child(groupName).child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
+                    userNames.add(userSnapshot.getValue().toString());
+                    userIDs.add(userSnapshot.getKey());
+                }
+
+                Spinner spinner = (Spinner) view.findViewById(R.id.newAdminPicker1);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, userNames);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         dialog = builder.create();
         return dialog;
     }
 
     public interface AddAdminDialogListener {
-        public void onCreateGroupDialogPositiveClick(Group group);
-        public void onCreateGroupDialogNegativeClick();
+        public void onAddAdminDialogPositiveClick(List<String> userIDs, List<String> userNames);
     }
 
     // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
@@ -80,39 +119,26 @@ public class AddAdminDialogFragment extends DialogFragment {
         {
             Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
             //Log.d("text", positiveButton.getText().toString());
-            /*
+
             positiveButton.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v) {
-                    TextInputLayout til = (TextInputLayout) d.findViewById(R.id.text_input_layout);
-                    TextInputLayout til1 = (TextInputLayout) d.findViewById(R.id.text_input_layout1);
-                    til.setErrorEnabled(false);
-                    til1.setErrorEnabled(false);
-                    TextInputEditText nameField = (TextInputEditText) d.findViewById(R.id.groupNameField);
-                    TextInputEditText descField = (TextInputEditText) d.findViewById(R.id.groupDescField);
-                    String nameText = nameField.getText().toString();
-                    String descText = descField.getText().toString();
 
-                    Spinner catSpinner = (Spinner) d.findViewById(R.id.groupCatSpinner);
-                    String category = catSpinner.getSelectedItem().toString();
+                    Spinner admin1 = (Spinner) d.findViewById(R.id.newAdminPicker1);
+                    List<String> newAdminIDs = new ArrayList<String>();
+                    List<String> newAdminNames = new ArrayList<String>();
 
-                    if (nameText.isEmpty()) {
-                        //til.setErrorEnabled(true);
-                        til.setError("You need to enter a name");
-                    }
-                    if (descText.isEmpty()) {
-                        //til.setErrorEnabled(true);
-                        til1.setError("You need to enter a description");
-                    }
-                    if(!nameText.isEmpty() && !descText.isEmpty()){
-                        Group group = new Group(nameText, descText, category, null, null, null, null);
-                        mListener.onCreateGroupDialogPositiveClick(group);
+
+                    if(!admin1.getSelectedItem().toString().isEmpty()){
+                        newAdminIDs.add(userIDs.get(admin1.getSelectedItemPosition()));
+                        newAdminNames.add(userNames.get(admin1.getSelectedItemPosition()));
+                        mListener.onAddAdminDialogPositiveClick(newAdminIDs, newAdminNames);
                         dismiss();
                     }
                 }
             });
-            */
+
         }
     }
 }

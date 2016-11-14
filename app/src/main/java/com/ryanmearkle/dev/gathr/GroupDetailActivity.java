@@ -1,8 +1,11 @@
 package com.ryanmearkle.dev.gathr;
 
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -18,25 +21,33 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.common.eventbus.EventBus;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.ryanmearkle.dev.gathr.models.Event;
 import com.ryanmearkle.dev.gathr.models.Group;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class GroupDetailActivity extends AppCompatActivity {
+public class GroupDetailActivity extends AppCompatActivity implements GroupEventFragment.OnFragmentInteractionListener, GroupResourceFragment.OnFragmentInteractionListener, CreateGroupEventDialogFragment.CreateGroupEventDialogListener,
+        AddAdminDialogFragment.AddAdminDialogListener{
 
 
     private FirebaseDatabase mFirebaseDatabase;
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    public SectionsPagerAdapter mSectionsPagerAdapter;
+    private FloatingActionButton fab;
     private ViewPager mViewPager;
-    private String groupString;
+    public String groupString;
     private Group group;
+    private int mPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,27 +68,52 @@ public class GroupDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(groupString);
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mPosition==0) {
+                    DialogFragment dialog = CreateGroupEventDialogFragment.newInstance(groupString);
+                    dialog.show(getSupportFragmentManager(), "NoticeDialogFragment");
+                }
+                else{
+                    Log.d("Resource Fragment", "FAB Click");
+                }
+            }
+        });
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),groupString);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                // fire event if the "My Site" page is being scrolled so the fragment can
+                // animate its fab to match
+                mPosition = position;
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
 
         mFirebaseDatabase.getReference()
                 .child("groups")
@@ -102,6 +138,7 @@ public class GroupDetailActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -111,69 +148,95 @@ public class GroupDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.add_admin) {
+            DialogFragment dialog1 = AddAdminDialogFragment.newInstance(groupString);
+            dialog1.show(getSupportFragmentManager(), "NoticeDialogFragment");
+            return true;
+        }
+        if (id == android.R.id.home) {
+            //Log.d("test","test");
+            //NavUtils.navigateUpFromSameTask(this);
+            this.onBackPressed();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_group_detail, container, false);
-            //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private Map<String, String> getGroupUserList(){
+        final Map<String, String> users = new HashMap<String, String>();
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        mFirebaseDatabase.getReference().child("groups").child(groupString).child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
+                    users.put(userSnapshot.getKey(), userSnapshot.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        return users;
+    }
+
+    @Override
+    public void onCreateGroupEventDialogPositiveClick(Event event) {
+        mFirebaseDatabase.getReference()
+                .child("groups")
+                .child(groupString)
+                .child("events")
+                .child(event.getTitle())
+                .setValue(event);
+    }
+
+    @Override
+    public void onCreateGroupEventDialogNegativeClick() {
+
+    }
+
+    @Override
+    public void onAddAdminDialogPositiveClick(List<String> adminIDs, List<String> adminNames) {
+        for(int i=0; i<adminIDs.size(); i++) {
+            mFirebaseDatabase.getReference()
+                    .child("groups")
+                    .child(groupString)
+                    .child("admins")
+                    .child(adminIDs.get(i))
+                    .setValue(adminNames.get(i));
+        }
+
+    }
+
+
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        String groupString;
+
+        public SectionsPagerAdapter(FragmentManager fm, String groupName) {
             super(fm);
+            groupString = groupName;
         }
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    return GroupEventFragment.newInstance(groupString);
+                case 1:
+                    return GroupResourceFragment.newInstance(groupString);
+            }
+            return null;
         }
 
         @Override
