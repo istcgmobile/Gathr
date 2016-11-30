@@ -11,11 +11,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ryanmearkle.dev.gathr.holders.GroupViewHolder;
 import com.ryanmearkle.dev.gathr.models.Group;
 
@@ -42,6 +46,7 @@ public class GroupListFragment extends ViewFragment {
     private RecyclerView groupRV;
     private DatabaseReference mFirebaseDatabaseReference;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
+    private View v;
 
     public GroupListFragment() {
         // Required empty public constructor
@@ -88,12 +93,32 @@ public class GroupListFragment extends ViewFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_group_list, container, false);
+        v = inflater.inflate(R.layout.fragment_group_list, container, false);
         Log.d("GroupListFrament", "layout inflated");
         groupRV = (RecyclerView) v.findViewById(R.id.groupRV);
         groupRV.setHasFixedSize(true);
         groupRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        mFirebaseDatabaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("groups")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()){
+
+                            hideNoGroupText();
+                        }
+                        else{
+                            showNoGroupText();
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.w("Uh-oh", "Failed to read value.", error.toException());
+                    }
+                });
+
         mFirebaseAdapter = new FirebaseRecyclerAdapter<Group,GroupViewHolder>(
                 Group.class,
                 R.layout.item_group_list,
@@ -130,6 +155,15 @@ public class GroupListFragment extends ViewFragment {
         if (mListener != null) {
             mListener.onLoadInteraction(null, null);
         }
+    }
+
+    public void hideNoGroupText(){
+        TextView noGroupText = (TextView) v.findViewById(R.id.noGroupText);
+        noGroupText.setVisibility(View.GONE);
+    }
+    public void showNoGroupText(){
+        TextView noGroupText = (TextView) v.findViewById(R.id.noGroupText);
+        noGroupText.setVisibility(View.VISIBLE);
     }
 
     @Override

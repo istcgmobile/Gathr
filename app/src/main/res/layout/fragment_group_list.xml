@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context="com.ryanmearkle.dev.gathr.EventDetailActivity">
 
+    <TextView
+        android:text="You are not a member of any groups yet! Tap the red icon to begin!"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/noGroupText"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:visibility="gone"/>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"

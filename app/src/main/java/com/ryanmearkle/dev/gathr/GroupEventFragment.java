@@ -127,6 +127,8 @@ public class GroupEventFragment extends ViewFragment {
             protected void populateViewHolder(EventViewHolder viewHolder,
                                               Event event, final int position) {
 
+
+
                 viewHolder.setTitle(event.getTitle());
                 viewHolder.setGroup(event.getGroupID());
                 viewHolder.setDescription(event.getDesc());

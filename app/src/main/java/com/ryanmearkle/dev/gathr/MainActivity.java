@@ -78,7 +78,7 @@ public class MainActivity
     private GoogleApiClient mGoogleApiClient;
     private CalendarView calendarView;
     private boolean isExpanded = false;
-    private TextView titleText;
+    private Long date;
 
 
     @Override
@@ -157,7 +157,7 @@ public class MainActivity
     }
 
     private void setupLayout() {
-        calendarView = (CalendarView) findViewById(R.id.calendarView);
+
         //titleText = (TextView) findViewById(R.id.titleTextView);
         //titleText.setText("Events");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -176,7 +176,10 @@ public class MainActivity
 
         replaceFragment("GROUPS", false);
         getSupportActionBar().setTitle("Gathr");
+
+        calendarView = (CalendarView) findViewById(R.id.calendarView);
         calendarView.setVisibility(View.GONE);
+
         navigationView.setCheckedItem(R.id.nav_groups);
     }
 
@@ -241,50 +244,7 @@ public class MainActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        switch (item.getItemId()) {
-            case R.id.sign_out_menu:
-                mFirebaseAuth.signOut();
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                mFirebaseUser = null;
-                mUsername = "ANONYMOUS";
-                mPhotoUrl = null;
-                startActivity(new Intent(this, GoogleSignInActivity.class));
-                return true;
-
-            case R.id.action_settings:
-                Intent intent = new Intent(this, GroupDetailActivity.class);
-                startActivity(intent);
-
-            case R.id.group_picker:
-                if (isExpanded) {
-                    //ViewCompat.animate(arrow).rotation(0).start();
-                    calendarView.setVisibility(View.GONE);
-                    isExpanded = false;
-                } else {
-                    //ViewCompat.animate(arrow).rotation(180).start();
-                    calendarView.setVisibility(View.VISIBLE);
-                    isExpanded = true;
-                }
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -296,6 +256,7 @@ public class MainActivity
             replaceFragment("CALENDAR", true);
         } else if (id == R.id.nav_groups) {
             replaceFragment("GROUPS", true);
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -311,11 +272,11 @@ public class MainActivity
             switch (TAG) {
                 case "CALENDAR":
                     fragment = CalendarFragment.newInstance(null, null);
-                    getSupportActionBar().setTitle("Events");
+                    //getSupportActionBar().setTitle("Events");
                     break;
                 case "GROUPS":
                     fragment = GroupListFragment.newInstance(null, null);
-                    getSupportActionBar().setTitle("Groups");
+                    //getSupportActionBar().setTitle("Groups");
                     break;
             }
         }
@@ -405,12 +366,14 @@ public class MainActivity
                         //Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });
+        ((GroupListFragment)getSupportFragmentManager().findFragmentByTag("GROUPS")).hideNoGroupText();
     }
 
     @Override
     public void onCreateGroupDialogNegativeClick() {
 
     }
+
 
     @Override
     public void onJoinGroupDialogPositiveClick(final String groupName) {
