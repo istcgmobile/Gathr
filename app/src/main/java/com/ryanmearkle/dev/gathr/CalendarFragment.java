@@ -18,7 +18,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.ryanmearkle.dev.gathr.models.Event;
+import com.ryanmearkle.dev.gathr.models.Group;
 import com.ryanmearkle.dev.gathr.models.User;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -44,6 +52,9 @@ public class CalendarFragment extends ViewFragment{
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private User mCurrentUser;
+    private String currentUserUID;
+    private ArrayList<String> userGroups = new ArrayList<String>();
+    private ArrayList<Event> userEvents = new ArrayList<Event>();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -103,23 +114,12 @@ public class CalendarFragment extends ViewFragment{
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        currentUserUID = mFirebaseUser.getUid();
 
-        mFirebaseDatabase.getReference()
-                .child("users")
-                .child(mFirebaseUser.getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User userAccount = dataSnapshot.getValue(User.class);
-                        mCurrentUser = userAccount;
+        getGroupList(currentUserUID);
 
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        // Failed to read value
-                        Log.w(TAG, "Failed to read value.", error.toException());
-                    }
-                });
+
+
         return view;
     }
 
@@ -172,5 +172,79 @@ public class CalendarFragment extends ViewFragment{
         void onLoadInteraction(String name, String tag);
     }
 
+    private void getGroupList(String currentUserUID){
+        mFirebaseDatabase.getReference()
+                .child("users")
+                .child(currentUserUID)
+                .child("groups")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.d("Datasnapshot", dataSnapshot.toString());
+                        if(!dataSnapshot.exists()){
+
+                        }
+                        else {
+                            mCurrentUser = dataSnapshot.getValue(User.class);
+                            for(String key : mCurrentUser.getGroups().keySet()){
+                                userGroups.add(key);
+                            }
+                            getEvents(userGroups);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.w(TAG, "Failed to read value.", error.toException());
+                    }
+                });
+
+    }
+
+    private void getEvents(ArrayList<String> userGroups){
+        for(int i = 0; i <= userGroups.size(); i++){
+            String group = userGroups.get(i);
+            mFirebaseDatabase.getReference()
+                    .child("groups")
+                    .child(group)
+                    .child("events")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Log.d("Datasnapshot", dataSnapshot.toString());
+                            if(!dataSnapshot.exists()){
+
+                            }
+                            else {
+                                for(DataSnapshot event : dataSnapshot.getChildren()){
+                                    Event tempEvent = event.getValue(Event.class);
+                                    userEvents.add(tempEvent);
+                                }
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            Log.w(TAG, "Failed to read value.", error.toException());
+                        }
+                    });
+        }
+        sortEvents();
+    }
+
+    private void sortEvents(){
+        Collections.sort(userEvents, new Comparator<Event>() {
+            @Override
+            public int compare(Event o1, Event o2) {
+                
+
+
+                return 0;
+            }
+        });
+    }
 
 }
