@@ -103,6 +103,7 @@ public class CalendarFragment extends ViewFragment{
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
         mFirebaseDatabase.getReference()
                 .child("users")
                 .child(mFirebaseUser.getUid())
