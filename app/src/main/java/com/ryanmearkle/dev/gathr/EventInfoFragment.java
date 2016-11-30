@@ -99,7 +99,12 @@ public class EventInfoFragment extends Fragment {
         TextView locationView = (TextView) view.findViewById(R.id.location);
         TextView descView = (TextView) view.findViewById(R.id.description);
 
-        timeView.setText(event.getDate() + " at " + event.getStartTime());
+        String eventDateTime = String.valueOf(event.getDateTime());
+        Log.d("Set Time/Date", eventDateTime);
+        String date = eventDateTime.substring(4,6)+"/"+eventDateTime.substring(6,8)+"/"+eventDateTime.substring(0,4);
+        String time = eventDateTime.substring(8,10)+":"+eventDateTime.substring(10,12);
+
+        timeView.setText(date + " at " + time);
         locationView.setText(event.getLocation());
         descView.setText(event.getDesc());
     }

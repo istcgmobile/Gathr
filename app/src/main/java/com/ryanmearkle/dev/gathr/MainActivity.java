@@ -117,6 +117,8 @@ public class MainActivity
 
         //Log.d("UID", mFirebaseUser.getUid());
 
+        String currentUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         mFirebaseDatabase.getReference()
                 .child("users")
                 .child(mFirebaseUser.getUid())
@@ -136,6 +138,10 @@ public class MainActivity
                 }
                 else {
                     mCurrentUser = dataSnapshot.getValue(User.class);
+                    Map<String, Group> groups = mCurrentUser.getGroups();
+                    for (String key : groups.keySet()) {
+
+                    }
                     //Log.d("wat", "wat");
                 }
             }

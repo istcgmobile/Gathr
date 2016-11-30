@@ -22,6 +22,7 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -50,6 +51,8 @@ public class CreateGroupEventDialogFragment extends DialogFragment implements Ti
     private boolean useNFC = false;
     private ProgressDialog nfcDialog;
     private Tag currentTag;
+    private String date;
+    private String time;
 
     public static CreateGroupEventDialogFragment newInstance(String groupString) {
         CreateGroupEventDialogFragment f = new CreateGroupEventDialogFragment();
@@ -122,14 +125,52 @@ public class CreateGroupEventDialogFragment extends DialogFragment implements Ti
     }
 
     @Override
-    public void onTimeSet(String time) {
+    public void onTimeSet(TimePicker v, int hour, int minute) {
+        String formattedHour = "";
+        String formattedMinute = "";
+        String amPM = "AM";
 
-        timeButton.setText(time);
+        if(hour<10){
+            formattedHour = "0"+hour;
+        }
+        else if (hour>=10){
+            formattedHour = String.valueOf(hour);
+        }
+        if(minute<10){
+            formattedMinute = "0"+minute;
+        }
+        else if(minute>=10){
+            formattedMinute = String.valueOf(minute);
+        }
+        time = formattedHour+formattedMinute;
+        if(hour>=12){
+            amPM = "PM";
+        }
+        else if (hour<12 || hour>0){
+            amPM = "AM";
+        }
+        timeButton.setText(hour+":"+formattedMinute+amPM);
     }
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        dateButton.setText((month+1)+"/"+day+"/"+year);
+        month = month+1;
+        String formattedMonth = "";
+        String formattedDay = "";
+        if((month)<10){
+            formattedMonth = "0"+month;
+        }
+        else if(month>=10){
+            formattedMonth = String.valueOf(month);
+        }
+        if((day)<10){
+            formattedDay = "0"+day;
+        }
+        else if(day>=10){
+            formattedDay = String.valueOf(day);
+        }
+        date = year+formattedMonth+formattedDay;
+        dateButton.setText(month+"/"+day+"/"+year);
     }
 
     public interface CreateGroupEventDialogListener {
@@ -208,8 +249,8 @@ public class CreateGroupEventDialogFragment extends DialogFragment implements Ti
                     String nameText = nameField.getText().toString();
                     String descText = descField.getText().toString();
                     String locText = locField.getText().toString();
-                    String timeText = timeButton.getText().toString();
-                    String dateText = dateButton.getText().toString();
+                    //String timeText = timeButton.getText().toString();
+                    //String dateText = dateButton.getText().toString();
 
                     if (useNFC){
                         message = nfcMger.createTextMessage(groupName + "&" + nameText);
@@ -220,7 +261,7 @@ public class CreateGroupEventDialogFragment extends DialogFragment implements Ti
                         }
                     }
 
-                    Event event = new Event(nameText, descText, groupName, locText, dateText, timeText);
+                    Event event = new Event(nameText, descText, groupName, locText, Long.parseLong(date+time));
                     mListener.hideNoGroupText();
                     mListener.onCreateGroupEventDialogPositiveClick(event);
                     dismiss();

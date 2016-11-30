@@ -94,11 +94,13 @@ public class GroupEventFragment extends ViewFragment {
         groupEventRV.setHasFixedSize(true);
         groupEventRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
         mFirebaseDatabaseReference.child("groups").child(mParam1).child("events")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(dataSnapshot.exists()){
+
                             hideNoGroupText();
                         }
                         else{
@@ -129,8 +131,7 @@ public class GroupEventFragment extends ViewFragment {
                 viewHolder.setGroup(event.getGroupID());
                 viewHolder.setDescription(event.getDesc());
                 viewHolder.setLocation(event.getLocation());
-                viewHolder.setStartTime(event.getStartTime());
-                viewHolder.setDate(event.getDate());
+                viewHolder.setDateTime(event.getDateTime());
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

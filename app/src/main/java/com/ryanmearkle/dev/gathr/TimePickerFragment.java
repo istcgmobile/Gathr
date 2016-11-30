@@ -31,18 +31,7 @@ public class TimePickerFragment extends DialogFragment
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        String amPm = "PM";
-        if(hourOfDay<11&&hourOfDay>0){
-            amPm = "AM";
-        }
-        else if(hourOfDay==12){
-            amPm = "PM";
-        }
-        else if(hourOfDay>12&&hourOfDay<24){
-            hourOfDay=hourOfDay-12;
-            amPm= "PM";
-        }
-        mListener.onTimeSet(hourOfDay + ":" + minute + amPm);
+        mListener.onTimeSet(view, hourOfDay, minute);
 
     }
 
@@ -62,6 +51,6 @@ public class TimePickerFragment extends DialogFragment
     }
 
     public interface TimePickerDialogListener {
-        public void onTimeSet(String time);
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute);
     }
 }

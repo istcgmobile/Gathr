@@ -35,17 +35,13 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
         TextView desc = (TextView) itemView.findViewById(R.id.eventDescText);
         desc.setText(descr);
     }
-    public void setStartTime(String time){
-        TextView dateTime = (TextView) itemView.findViewById(R.id.dateTimeText);
-        String date = dateTime.getText().toString().split("-")[0];
-        Log.d("SetTime Date", date);
-        dateTime.setText(date + "- " + time);
-    }
-    public void setDate(String date) {
-        TextView dateTime = (TextView) itemView.findViewById(R.id.dateTimeText);
-        String time = dateTime.getText().toString().split("-")[1];
-        Log.d("SetDate Time", time);
-        dateTime.setText(date + " -" + time);
+    public void setDateTime(long dateTime){
+        TextView dateTimeText = (TextView) itemView.findViewById(R.id.dateTimeText);
+        String eventDateTime = String.valueOf(dateTime);
+        Log.d("Set Time/Date", eventDateTime);
+        String date = eventDateTime.substring(4,6)+"/"+eventDateTime.substring(6,8)+"/"+eventDateTime.substring(0,4);
+        String time = eventDateTime.substring(8,10)+":"+eventDateTime.substring(10,12);
+        dateTimeText.setText(date + " - " + time);
     }
     public void setLocation(String location) {
         TextView startTime = (TextView) itemView.findViewById(R.id.locationText);
@@ -56,7 +52,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
     {
         menu.setHeaderTitle("Select an Action");
-        Log.d("AAAAAAAAAAAAAAAAAAAAAAA", String.valueOf(v.getId()));
+        //Log.d("AAAAAAAAAAAAAAAAAAAAAAA", String.valueOf(v.getId()));
         menu.add(0, v.getId(), 0, "Edit");//groupId, itemId, order, title
         menu.add(0, v.getId(), 0, "Delete");
     }

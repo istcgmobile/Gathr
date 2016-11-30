@@ -14,8 +14,7 @@ public class Event {
     //private String id;
     private String groupID;
     private String location;
-    private String startTime;
-    private String date;
+    private long dateTime;
     private String title;
     private String desc;
 
@@ -23,12 +22,11 @@ public class Event {
     private List<String> resources;
 
 
-    public Event(String title, String desc, String groupID, String location, String date, String startTime){
+    public Event(String title, String desc, String groupID, String location, long dateTime){
         this.title=title;
         this.groupID=groupID;
         this.location=location;
-        this.startTime=startTime;
-        this.date=date;
+        this.dateTime=dateTime;
         this.desc=desc;
     }
 
@@ -57,17 +55,11 @@ public class Event {
     public void setGroupID(String groupID){
         this.groupID=groupID;
     }
-    public String getStartTime(){
-        return this.startTime;
+    public long getDateTime(){
+        return this.dateTime;
     }
-    public void setStartTime(String startTime){
-        this.startTime=startTime;
-    }
-    public String getDate(){
-        return this.date;
-    }
-    public void setDate(String date){
-        this.date=date;
+    public void setDateTime(long dateTime){
+        this.dateTime=dateTime;
     }
 
     @Override

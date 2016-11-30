@@ -54,7 +54,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GroupDetailActivity extends AppCompatActivity implements GroupEventFragment.OnFragmentInteractionListener, GroupResourceFragment.OnFragmentInteractionListener, CreateGroupEventDialogFragment.CreateGroupEventDialogListener,
-        AddAdminDialogFragment.AddAdminDialogListener, TimePickerFragment.TimePickerDialogListener {
+        AddAdminDialogFragment.AddAdminDialogListener {
 
 
     private FirebaseDatabase mFirebaseDatabase;
@@ -321,10 +321,7 @@ public class GroupDetailActivity extends AppCompatActivity implements GroupEvent
     }
 
 
-    @Override
-    public void onTimeSet(String time) {
 
-    }
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
