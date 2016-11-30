@@ -2,9 +2,11 @@ package com.ryanmearkle.dev.gathr;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,10 +19,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi.DriveContentsResult;
+import com.google.android.gms.drive.DriveFolder;
+import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -35,6 +42,7 @@ import static com.google.android.gms.common.SignInButton.SIZE_WIDE;
 
 public class GoogleSignInActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks,
         View.OnClickListener {
 
     private static final String TAG = "GoogleActivity";
@@ -69,6 +77,7 @@ public class GoogleSignInActivity extends AppCompatActivity implements
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
                 .requestEmail()
                 .build();
 
@@ -76,6 +85,9 @@ public class GoogleSignInActivity extends AppCompatActivity implements
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(Drive.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
                 .build();
 
 
@@ -142,6 +154,7 @@ public class GoogleSignInActivity extends AppCompatActivity implements
                                     Toast.LENGTH_SHORT).show();
                         }
                         else{
+                            mGoogleApiClient.connect();
                             startActivity(new Intent(GoogleSignInActivity.this, MainActivity.class));
                             finish();
                         }
@@ -165,21 +178,27 @@ public class GoogleSignInActivity extends AppCompatActivity implements
         if (i == R.id.sign_in_button) {
             signIn();
         }
-        if(i == R.id.testAccountButton){
-            mAuth.signInWithEmailAndPassword("test@gmail.com", "testAccount")
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (!task.isSuccessful()) {
-                        Toast.makeText(GoogleSignInActivity.this, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        startActivity(new Intent(GoogleSignInActivity.this, MainActivity.class));
-                        finish();
-                    }
-                }
-            });
-        }
     }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+/*
+        IntentSender intentSender = Drive.DriveApi
+                .newOpenFileActivityBuilder()
+                .setMimeType(new String[] { "text/plain", "text/html" })
+                .build(mGoogleApiClient);
+        try {
+            startIntentSenderForResult(intentSender, 1, null, 0, 0, 0);
+        } catch (IntentSender.SendIntentException e) {
+            Log.w(TAG, "Unable to send intent", e);
+        }
+*/
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+
 }

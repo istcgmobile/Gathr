@@ -34,8 +34,16 @@
         <activity android:name=".CalendarActivity" />
         <activity
             android:name=".EventDetailActivity"
-            android:label="@string/title_activity_scrolling"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="Event Detail"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".GroupDetailActivity"
             android:label="@string/title_activity_group_detail"

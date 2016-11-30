@@ -53,7 +53,7 @@ public class TimePickerFragment extends DialogFragment
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
-            mListener = (TimePickerFragment.TimePickerDialogListener) ((GroupDetailActivity)context).mSectionsPagerAdapter.getItem(0);
+            mListener = (TimePickerDialogListener) getTargetFragment();
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(context.toString()

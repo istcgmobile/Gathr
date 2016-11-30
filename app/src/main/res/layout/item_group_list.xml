@@ -45,7 +45,7 @@
             android:layout_marginBottom="8dp"
             android:text="This is a placeholder group to test a FirebaseRecyclerViewAdapter functionality. This is extra text to test truncation of the description, the full description can be viewed when clicked."
             android:ellipsize="end"
-            android:maxLines="3"
+            android:maxLines="2"
             android:textAppearance="@android:style/TextAppearance.Material.Body1" />
         </RelativeLayout>
 

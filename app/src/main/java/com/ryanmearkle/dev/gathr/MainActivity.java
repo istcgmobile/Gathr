@@ -85,25 +85,9 @@ public class MainActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        calendarView = (CalendarView) findViewById(R.id.calendarView);
-        titleText = (TextView) findViewById(R.id.titleTextView);
-        titleText.setText("Events");
 
-        if(getIntent().getExtras()==null){
-            setupFirebase();
-        }
-        else {
-            String useTest = getIntent().getExtras().getString("useTest");
-            if(useTest==null){
-                setupFirebase();
-            }
-            else if(useTest.equals("true")){
-                setupTestAccount();
-            }
-            else{
-                setupFirebase();
-            }
-        }
+        setupFirebase();
+
     }
 
     private void setupFirebase() {
@@ -167,7 +151,11 @@ public class MainActivity
     }
 
     private void setupLayout() {
+        calendarView = (CalendarView) findViewById(R.id.calendarView);
+        //titleText = (TextView) findViewById(R.id.titleTextView);
+        //titleText.setText("Events");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Gathr");
         setSupportActionBar(toolbar);
 
         setupNavDrawer(toolbar);
@@ -176,13 +164,14 @@ public class MainActivity
         getSupportFragmentManager().addOnBackStackChangedListener(
                 new FragmentManager.OnBackStackChangedListener() {
                     public void onBackStackChanged() {
-                        updateUI();
+                        //updateUI();
                     }
                 });
 
-        replaceFragment("CALENDAR", false);
+        replaceFragment("GROUPS", false);
+        getSupportActionBar().setTitle("Gathr");
         calendarView.setVisibility(View.GONE);
-
+        navigationView.setCheckedItem(R.id.nav_groups);
     }
 
     private void setupSheetFab() {
@@ -316,11 +305,11 @@ public class MainActivity
             switch (TAG) {
                 case "CALENDAR":
                     fragment = CalendarFragment.newInstance(null, null);
-                    titleText.setText("Events");
+                    getSupportActionBar().setTitle("Events");
                     break;
                 case "GROUPS":
                     fragment = GroupListFragment.newInstance(null, null);
-                    titleText.setText("Groups");
+                    getSupportActionBar().setTitle("Groups");
                     break;
             }
         }
@@ -331,12 +320,7 @@ public class MainActivity
         }
     }
 
-    private void updateUI() {
-        String name = "nav_" + currentFragmentTag.toLowerCase();
-        int resID = getResources().getIdentifier(name, "id", getPackageName());
-        navigationView.setCheckedItem(resID);
-        getSupportActionBar().setTitle(currentFragmentFriendlyName);
-    }
+
 
     @Override
     public void onClick(View v) {
@@ -366,7 +350,7 @@ public class MainActivity
     public void onLoadInteraction(String friendlyName, String tag) {
         currentFragmentFriendlyName = friendlyName;
         currentFragmentTag = tag;
-        updateUI();
+        //updateUI();
     }
 
     @Override
@@ -494,6 +478,10 @@ public class MainActivity
                         Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });
+    }
+
+    public String getCurrentUserID(){
+        return mCurrentUser.getUid();
     }
 
 }

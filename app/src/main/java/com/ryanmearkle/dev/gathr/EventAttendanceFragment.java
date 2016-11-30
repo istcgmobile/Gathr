@@ -17,18 +17,20 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.ryanmearkle.dev.gathr.holders.GroupViewHolder;
+import com.ryanmearkle.dev.gathr.holders.SimpleUserViewHolder;
 import com.ryanmearkle.dev.gathr.models.Group;
+import com.ryanmearkle.dev.gathr.models.SimpleUser;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GroupListFragment.onLoadListener} interface
+ * {@link EventAttendanceFragment.onLoadListener} interface
  * to handle interaction events.
- * Use the {@link GroupListFragment#newInstance} factory method to
+ * Use the {@link EventAttendanceFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GroupListFragment extends ViewFragment {
+public class EventAttendanceFragment extends ViewFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -43,7 +45,7 @@ public class GroupListFragment extends ViewFragment {
     private DatabaseReference mFirebaseDatabaseReference;
     private FirebaseRecyclerAdapter mFirebaseAdapter;
 
-    public GroupListFragment() {
+    public EventAttendanceFragment() {
         // Required empty public constructor
     }
 
@@ -66,8 +68,8 @@ public class GroupListFragment extends ViewFragment {
      * @return A new instance of fragment GroupFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GroupListFragment newInstance(String param1, String param2) {
-        GroupListFragment fragment = new GroupListFragment();
+    public static EventAttendanceFragment newInstance(String param1, String param2) {
+        EventAttendanceFragment fragment = new EventAttendanceFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -88,34 +90,28 @@ public class GroupListFragment extends ViewFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_group_list, container, false);
-        Log.d("GroupListFrament", "layout inflated");
-        groupRV = (RecyclerView) v.findViewById(R.id.groupRV);
+        View v = inflater.inflate(R.layout.fragment_event_attendance, container, false);
+        //Log.d("GroupListFrament", "layout inflated");
+        groupRV = (RecyclerView) v.findViewById(R.id.userRV);
         groupRV.setHasFixedSize(true);
         groupRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mFirebaseAdapter = new FirebaseRecyclerAdapter<Group,GroupViewHolder>(
-                Group.class,
-                R.layout.item_group_list,
-                GroupViewHolder.class,
-                mFirebaseDatabaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("groups")){
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<SimpleUser,SimpleUserViewHolder>(
+                SimpleUser.class,
+                R.layout.item_attendance_list,
+                SimpleUserViewHolder.class,
+                mFirebaseDatabaseReference
+                        .child("groups")
+                        .child(mParam1)
+                        .child("events")
+                        .child(mParam2)
+                        .child("attendance")){
 
             @Override
-            protected void populateViewHolder(GroupViewHolder viewHolder,
-                                              Group group, final int position) {
+            protected void populateViewHolder(SimpleUserViewHolder viewHolder,
+                                              SimpleUser person, final int position) {
                 //mProgressBar.setVisibility(ProgressBar.INVISIBLE);
-                viewHolder.setCategory(group.getCategory());
-                viewHolder.setGroup(group.getName());
-                viewHolder.setDescription(group.getDesc());
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(getContext(), GroupDetailActivity.class);
-                        intent.putExtra("GROUP", mFirebaseAdapter.getItem(position).toString());
-                        intent.putExtra("USER", ((MainActivity)getContext()).getCurrentUserID());
-                        startActivity(intent);
-                    }
-                });
+                viewHolder.setName(person.getName());
             }
 
 
@@ -135,13 +131,7 @@ public class GroupListFragment extends ViewFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof onLoadListener) {
-            mListener = (onLoadListener) context;
 
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnLoadListener");
-        }
     }
 
     @Override

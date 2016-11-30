@@ -5,6 +5,16 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context="com.ryanmearkle.dev.gathr.GroupEventFragment">
 
+    <TextView
+        android:text="There are currently no events to show for this group"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/noGroupText"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:visibility="gone"/>
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

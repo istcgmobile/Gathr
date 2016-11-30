@@ -7,6 +7,13 @@
     android:padding="16dp"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create an Event"
+        android:layout_marginBottom="16dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_input_layout"
         android:layout_width="match_parent"
@@ -35,6 +42,7 @@
         android:textSize="18sp"
         android:inputType="textMultiLine"
         android:hint="Description" />
+
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -53,20 +61,37 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/text_input_layout3"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/eventTimeField"
-            android:layout_width="match_parent"
+        <Button
+            android:text="Date"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#000000"
-            android:textSize="18sp"
-            android:inputType="textCapWords"
-            android:hint="Location" />
+            android:layout_weight="1"
+            android:id="@+id/dateButton"
+            style="@style/Widget.AppCompat.Button" />
 
-    </android.support.design.widget.TextInputLayout>
+        <Button
+            android:text="Time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/timeButton"
+            android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button" />
+
+        <ToggleButton
+            android:text="ToggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/toggleButton"
+            android:layout_weight="1"
+            android:checked="false"
+            android:textOff="Use NFC"
+            android:textOn="Use NFC" />
+
+    </LinearLayout>
+
 
 </LinearLayout>

@@ -4,10 +4,14 @@
     android:layout_height="match_parent"
     tools:context="com.ryanmearkle.dev.gathr.GroupResourceFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:text="There are currently no resources to show for this group"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Google Drive API" />
+        android:id="@+id/noResourceText"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:visibility="visible"/>
 
 </FrameLayout>

@@ -16,6 +16,11 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@+id/buttonlayout">
+
         <TextView
             android:id="@+id/eventNameText"
             android:layout_width="wrap_content"
@@ -40,10 +45,10 @@
             android:layout_marginBottom="8dp"
             android:text="This is our standard weekly meeting to cover new information for the group. Please attend if you are available. This is extra text to test truncation of the description, the full description can be viewed when clicked."
             android:ellipsize="end"
-            android:maxLines="3"
+            android:maxLines="2"
             android:textAppearance="@android:style/TextAppearance.Material.Body1" />
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/timelayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,33 +56,40 @@
             android:gravity="left">
 
             <TextView
-                android:id="@+id/startTimeText"
+                android:text="Location"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:text="6:00pm - 205 IST"
+                android:layout_height="wrap_content"
+                android:id="@+id/locationText"
+                android:layout_below="@+id/dateTimeText"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/dateTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="11/11/2016 - 6:32PM"
                 android:gravity="center_vertical"
                 android:textAppearance="@android:style/TextAppearance.Material.Small" />
 
-        </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
 
         <LinearLayout
             android:id="@+id/buttonlayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="16dp"
+            android:layout_height="match_parent"
             android:gravity="right"
-            android:layout_alignTop="@+id/timelayout"
-            android:layout_alignParentStart="true">
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true">
 
-            <Button
+            <ImageButton
                 android:id="@+id/moreInfoButton"
                 style="?android:buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="28dp"
-                android:gravity="right|center_vertical"
-                android:text="View Details"
-                android:onClick="viewDetail"
-                android:padding="0dp"
-                android:textSize="14sp" />
+                android:layout_width="16dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:src="@drawable/ic_chevron_right_black_24dp" />
 
         </LinearLayout>
 

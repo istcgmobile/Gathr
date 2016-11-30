@@ -2,18 +2,28 @@ package com.ryanmearkle.dev.gathr;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.ryanmearkle.dev.gathr.models.Event;
 import com.ryanmearkle.dev.gathr.models.Group;
@@ -24,7 +34,7 @@ import org.w3c.dom.Text;
  * Created by ryanm on 10/24/2016.
  */
 
-public class CreateGroupEventDialogFragment extends DialogFragment implements TimePickerFragment.TimePickerDialogListener{
+public class CreateGroupEventDialogFragment extends DialogFragment implements TimePickerFragment.TimePickerDialogListener, DatePickerFragment.DatePickerDialogListener{
 
     private AlertDialog dialog;
     private CreateGroupEventDialogListener mListener;
@@ -32,6 +42,14 @@ public class CreateGroupEventDialogFragment extends DialogFragment implements Ti
     private View view;
     private TextView startTime;
     private String groupName;
+    private Button timeButton;
+    private Button dateButton;
+    private ToggleButton nfcButton;
+    private NFCManager nfcMger;
+    private NdefMessage message = null;
+    private boolean useNFC = false;
+    private ProgressDialog nfcDialog;
+    private Tag currentTag;
 
     public static CreateGroupEventDialogFragment newInstance(String groupString) {
         CreateGroupEventDialogFragment f = new CreateGroupEventDialogFragment();
@@ -51,6 +69,8 @@ public class CreateGroupEventDialogFragment extends DialogFragment implements Ti
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         view = inflater.inflate(R.layout.fragment_dialog_create_group_event, null);
+
+        nfcMger = new NFCManager(getActivity());
         /*
         startTime = (TextView) view.findViewById(R.id.eventTime);
         startTime.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +81,36 @@ public class CreateGroupEventDialogFragment extends DialogFragment implements Ti
             }
         } );
         */
+        timeButton = (Button) view.findViewById(R.id.timeButton);
+        dateButton = (Button) view.findViewById(R.id.dateButton);
+        ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggleButton);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    useNFC = true;
+                } else {
+                    useNFC = false;
+                }
+            }
+        });
+        timeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment newFragment = new TimePickerFragment();
+                newFragment.setTargetFragment(CreateGroupEventDialogFragment.this, 0);
+                newFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
+            }
+        });
+        dateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment newFragment = new DatePickerFragment();
+                newFragment.setTargetFragment(CreateGroupEventDialogFragment.this, 0);
+                newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+            }
+        });
+
+
         builder.setView(view)
                 .setPositiveButton("Create", null)
                 .setNegativeButton("Cancel", null);
@@ -73,12 +123,18 @@ public class CreateGroupEventDialogFragment extends DialogFragment implements Ti
 
     @Override
     public void onTimeSet(String time) {
-        startTime.setText(time);
+
+        timeButton.setText(time);
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int day) {
+        dateButton.setText((month+1)+"/"+day+"/"+year);
     }
 
     public interface CreateGroupEventDialogListener {
         public void onCreateGroupEventDialogPositiveClick(Event event);
-        public void onCreateGroupEventDialogNegativeClick();
+        public void hideNoGroupText();
     }
 
     @Override
@@ -102,10 +158,24 @@ public class CreateGroupEventDialogFragment extends DialogFragment implements Ti
         }
     }
 
-    public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
+    public void writeToTag(Context context, Intent intent) {
+        //("Nfc", "New intent");
+        // It is the time to write the tag
+        currentTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        if (message != null) {
+            nfcMger.writeTag(currentTag, message);
+            dialog.dismiss();
+            nfcDialog.dismiss();
+            Toast.makeText(context, "The NFC tag has been linked!", Toast.LENGTH_SHORT).show();
+
+        }
+        else {
+            // Handle intent
+
+        }
     }
+
+
 
     @Override
     public void onStart()
@@ -121,24 +191,37 @@ public class CreateGroupEventDialogFragment extends DialogFragment implements Ti
                 @Override
                 public void onClick(View v) {
 
+
                     TextInputLayout til = (TextInputLayout) d.findViewById(R.id.text_input_layout);
                     TextInputLayout til1 = (TextInputLayout) d.findViewById(R.id.text_input_layout1);
                     TextInputLayout til2 = (TextInputLayout) d.findViewById(R.id.text_input_layout2);
-                    TextInputLayout til3 = (TextInputLayout) d.findViewById(R.id.text_input_layout3);
+                    //TextInputLayout til3 = (TextInputLayout) d.findViewById(R.id.text_input_layout3);
 
                     til.setErrorEnabled(false);
                     til1.setErrorEnabled(false);
+                    til2.setErrorEnabled(false);
                     TextInputEditText nameField = (TextInputEditText) d.findViewById(R.id.eventNameField);
                     TextInputEditText descField = (TextInputEditText) d.findViewById(R.id.eventDescField);
                     TextInputEditText locField = (TextInputEditText) d.findViewById(R.id.eventLocationField);
-                    TextInputEditText timeField = (TextInputEditText) d.findViewById(R.id.eventTimeField);
+
 
                     String nameText = nameField.getText().toString();
                     String descText = descField.getText().toString();
                     String locText = locField.getText().toString();
-                    String timeText = timeField.getText().toString();
+                    String timeText = timeButton.getText().toString();
+                    String dateText = dateButton.getText().toString();
 
-                    Event event = new Event(nameText, descText, groupName, locText, timeText);
+                    if (useNFC){
+                        message = nfcMger.createTextMessage(groupName + "&" + nameText);
+                        if (message != null) {
+                            nfcDialog = new ProgressDialog(getContext());
+                            nfcDialog.setMessage("Tap the NFC tag to link with " + groupName + " event \"" + nameText + "\"");
+                            nfcDialog.show();
+                        }
+                    }
+
+                    Event event = new Event(nameText, descText, groupName, locText, dateText, timeText);
+                    mListener.hideNoGroupText();
                     mListener.onCreateGroupEventDialogPositiveClick(event);
                     dismiss();
 

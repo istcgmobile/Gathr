@@ -3,8 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.ryanmearkle.dev.gathr.GroupDetailActivity">
     <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="Settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/add_nfc_tag"
+        android:title="Add NFC Tag"
+        android:visible="false"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/add_admin"
         android:title="Add Admin"
+        android:visible="false"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_chat"
